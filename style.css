@@ -1,0 +1,352 @@
+@font-face {
+  font-family: 'Bubble Boba';
+  src: url('assets/BubbleBoba.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --brown: #4a3428;
+  --pink: #f6c9d4;
+  --pink-soft: #fbe4ea;
+  --white: #ffffff;
+}
+
+/* ---------- page-to-page transition, plain fade ---------- */
+/* opts every same-origin navigation between pages that load this
+   stylesheet into a native cross-document view transition. Browsers
+   without support (Firefox, Safari as of writing) just navigate
+   normally — this is a progressive enhancement, not a requirement.
+   Kept to a plain opacity fade (no blur) since blurring the whole
+   page, nav included, read as dizzying rather than smooth. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--white);
+  overflow-x: hidden;
+  /* auto (not hidden): the hero is sized to fit one screen with no
+     scrollbar in the normal case, but this is a safety net so content
+     is never trapped/inaccessible if an in-between viewport ever
+     doesn't quite fit */
+  overflow-y: auto;
+  font-family: 'Lacquer', cursive;
+  color: var(--brown);
+}
+
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 40px 60px;
+}
+
+/* ---------- background branches, faint ---------- */
+.bg-branches {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+}
+
+/* ---------- falling petals ---------- */
+.petals {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 999;
+}
+
+.petal {
+  position: absolute;
+  top: -60px;
+  width: 26px;
+  height: auto;
+  opacity: 0.55;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes fall {
+  0%   { transform: translate(0, -10vh) rotate(0deg);   opacity: 0; }
+  10%  { opacity: 0.55; }
+  90%  { opacity: 0.55; }
+  100% { transform: translate(40px, 110vh) rotate(220deg); opacity: 0; }
+}
+
+.p1 { left: 6%;  width: 16px; animation-duration: 14s; animation-delay: 0s;  }
+.p2 { left: 18%; width: 46px; animation-duration: 18s; animation-delay: 2s;  }
+.p3 { left: 32%; width: 22px; animation-duration: 11s; animation-delay: 5s;  }
+.p4 { left: 47%; width: 38px; animation-duration: 16s; animation-delay: 1s;  }
+.p5 { left: 61%; width: 18px; animation-duration: 13s; animation-delay: 7s;  }
+.p6 { left: 74%; width: 48px; animation-duration: 19s; animation-delay: 3s;  }
+.p7 { left: 85%; width: 24px; animation-duration: 12s; animation-delay: 9s;  }
+.p8 { left: 93%; width: 34px; animation-duration: 17s; animation-delay: 4.5s;}
+
+/* ---------- nav ---------- */
+/* .nav is the single flex row; the inner <nav> and <ul> are unwrapped via
+   display:contents so the icon link and each <li> become direct flex
+   siblings, sharing one align-items/justify-content across the whole row. */
+.nav {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.nav-icon-link {
+  flex-shrink: 0;
+  display: inline-flex;
+  line-height: 0;
+  border-radius: 50%;
+  transition: transform 0.25s ease;
+}
+
+.nav-icon-link:hover,
+.nav-icon-link:focus-visible {
+  transform: scale(1.08);
+}
+
+.nav-icon {
+  /* fluid: scales continuously between mobile and desktop instead of
+     jumping at the breakpoint */
+  width: clamp(40px, calc(31px + 2.3vw), 64px);
+  height: auto;
+  flex-shrink: 0;
+}
+
+.nav nav,
+.nav ul {
+  display: contents;
+}
+
+.nav li {
+  display: flex;
+  align-items: center;
+}
+
+.nav a {
+  position: relative;
+  text-decoration: none;
+  text-transform: lowercase;
+  color: var(--brown);
+  font-size: clamp(12px, calc(8px + 0.95vw), 22px);
+  line-height: 1.15;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  padding-bottom: 4px;
+  text-shadow: 0 0 8px #fff, 0 0 14px #fff, 0 0 20px #fff;
+  transition: transform 0.25s ease, text-shadow 0.25s ease, color 0.25s ease;
+}
+
+.nav-break, .mobile-break { display: none; }
+
+@media (min-width: 700px) {
+  .nav-break { display: inline; }
+}
+
+.nav a:hover,
+.nav a:focus-visible {
+  color: var(--brown);
+  transform: scale(1.14);
+  text-shadow: 0 0 10px #fff, 0 0 18px #fff, 0 0 28px #fff;
+}
+
+/* ---------- hero ---------- */
+.hero {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  min-height: 0;
+}
+
+.hero-left {
+  /* fluid: scales continuously with viewport width (clamped between
+     280px and 580px), still capped by 62vh on short screens. Set as
+     both flex-basis (used as width when .hero is a row, on desktop)
+     and width directly (flex-basis becomes height once .hero switches
+     to a column on mobile, so width must be set explicitly too) */
+  --hero-left-size: min(clamp(280px, calc(190px + 27vw), 580px), 62vh);
+  width: var(--hero-left-size);
+  flex: 0 0 var(--hero-left-size);
+}
+
+.frame-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+  transition: transform 0.35s ease;
+  outline: none;
+}
+
+.frame-wrap:hover,
+.frame-wrap:focus-visible {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+.frame-wrap img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.frame-wrap img.photo {
+  z-index: 1;
+  inset: 12%;
+  width: 76%;
+  height: 76%;
+}
+.bear-frame {
+  z-index: 2;
+}
+
+.hero-right {
+  flex: 1 1 0%;
+  /* kept small on purpose: a large min-width here is what was forcing
+     this column to wrap below the photo at in-between viewport widths */
+  min-width: 220px;
+  margin-left: 60px;
+}
+
+.hero-text {
+  width: 100%;
+  /* fluid: scales continuously with viewport width (clamped between
+     230px and 720px), still capped by 80vh on short screens */
+  max-width: min(clamp(230px, calc(50px + 47vw), 720px), 80vh);
+  height: auto;
+  display: block;
+}
+
+.tagline {
+  font-family: 'Lacquer', cursive;
+  text-transform: lowercase;
+  font-size: clamp(13px, calc(8px + 1.24vw), 26px);
+  line-height: 1.6;
+  color: var(--brown);
+  margin-top: 8px;
+  max-width: min(clamp(230px, calc(50px + 47vw), 720px), 80vh);
+  text-align: center;
+  text-shadow: 0 0 8px #fff, 0 0 14px #fff, 0 0 20px #fff;
+}
+
+/* ---------- under construction pages ---------- */
+.construction {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 3vh, 28px);
+  min-height: 0;
+  text-align: center;
+}
+
+.construction-bear {
+  /* fluid: scales continuously with viewport width (clamped between
+     200px and 360px) instead of jumping at a breakpoint, still capped
+     by 38vh on short screens */
+  width: min(clamp(200px, calc(141px + 15.2vw), 360px), 38vh);
+  height: auto;
+}
+
+.construction-text {
+  font-family: 'Lacquer', cursive;
+  text-transform: lowercase;
+  font-size: clamp(16px, calc(10px + 1.4vw), 28px);
+  color: var(--brown);
+  text-shadow: 0 0 8px #fff, 0 0 14px #fff, 0 0 20px #fff;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .petal { animation: none; opacity: 0.2; }
+  .frame-wrap, .frame-wrap:hover, .frame-wrap:focus-visible {
+    transition: none;
+    transform: none;
+  }
+  .nav a { transition: none; }
+}
+
+/* ---------- responsive: stack for mobile ---------- */
+@media (max-width: 860px) {
+  /* stacked content usually runs taller than one screen, so restore
+     normal scrolling instead of the desktop's locked 100vh layout */
+  html, body { height: auto; overflow: auto; }
+
+  .page { height: auto; padding: 24px 20px; }
+
+  /* no width/top/right override here: inherit the desktop full-bleed
+     rule (position:fixed, inset:0, 100vw/100vh, object-fit:cover) so the
+     background covers edge-to-edge with no margin on mobile either */
+
+  .mobile-break { display: inline; }
+
+  .nav {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .nav a {
+    text-align: center;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .hero {
+    flex: none;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-right { text-align: center; margin-left: 0; min-width: 0; }
+
+  .hero-text { margin: 0 auto; }
+
+  .tagline {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
